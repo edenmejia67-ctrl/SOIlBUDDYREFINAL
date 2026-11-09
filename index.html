@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Soil Buddy RE</title>
+<meta name="theme-color" content="#0a1007">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="logo-mark.svg">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<script>try{if(localStorage.getItem('sb-intro')&&!/[?&]intro/.test(location.search))document.documentElement.classList.add('nointro')}catch(e){}</script>
+<style>
+:root{--bg:#0a1007;--s1:#121b0c;--s2:#1b2813;--line:#2a3b1d;--ink:#eef4e2;--mut:#93a584;--lime:#b7f33c;--lime-ink:#10200a;--water:#4cc2ff;--warn:#ffc24b;--bad:#ff6b5b;--w1:#e9d9c1;--w2:#b7f33c;--r-hero:28px;--r-card:22px;--r-btn:16px;color-scheme:dark}
+*{box-sizing:border-box}html{background:var(--bg)}
+body{margin:0 auto;max-width:430px;min-height:100vh;color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;background:radial-gradient(520px 320px at 100% -4%,#26420f,transparent 70%),var(--bg);padding:0 16px calc(130px + env(safe-area-inset-bottom,0px));-webkit-tap-highlight-color:transparent;overscroll-behavior:none;touch-action:manipulation;overflow-x:hidden}
+h1,h2,h3,p{margin:0}[hidden]{display:none!important}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+small,.note{color:var(--mut);font-size:13px}.note{display:block;margin-top:10px;line-height:1.45}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}.ic.big{width:44px;height:44px}.ic.sm{width:18px;height:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sp{justify-content:space-between}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:var(--r-btn);background:var(--lime);color:var(--lime-ink);font-weight:700;transition:transform .12s,opacity .2s}
+.btn:active{transform:scale(.95)}.btn.alt{background:var(--s2);color:var(--ink)}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}.btn.bad{background:var(--bad);color:#2b0904}.btn.sm{min-height:44px;padding:0 14px;font-size:14px}.btn[disabled]{opacity:.45;pointer-events:none}
+input[type=text],input[type=number]{font:inherit;min-height:46px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--s2);color:var(--ink);width:100%}
+label.f{display:block;font-size:13px;color:var(--mut)}label.f input{margin-top:6px}
+/* header */
+.top{display:flex;align-items:center;gap:10px;padding:calc(14px + env(safe-area-inset-top,0px)) 0 8px}
+.brand{display:flex;align-items:center;gap:9px;flex:1;min-width:0}.brand .lm{width:32px;height:38px;flex:none}.brand .wm{height:22px;width:94px;flex:none}
+.pill{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 12px;border-radius:99px;background:var(--s2);font-size:13px;font-weight:600;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mut);flex:none}
+.pill[data-st=on] .dot{background:var(--lime);box-shadow:0 0 0 3px #b7f33c33}.pill[data-st=busy] .dot{background:var(--warn)}.pill[data-st=off] .dot{background:var(--bad)}.pill[data-st=demo] .dot{background:var(--water)}
+.ibtn{position:relative;width:44px;height:44px;border-radius:50%;background:var(--s2);display:grid;place-items:center;flex:none}
+.badge{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--bad);color:#2b0904;font-size:12px;font-weight:800;display:grid;place-items:center;border:2px solid var(--bg)}
+/* tabs, cards */
+.tab{display:none}.tab.on{display:block;animation:in .35s}@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.card{background:var(--s1);border-radius:var(--r-card);padding:16px;margin:12px 0}
+.card h3{font-size:17px;margin-bottom:4px}
+.empty{display:flex;flex-direction:column;gap:12px;border:1px dashed var(--line)}.empty .eic{width:52px;height:52px;border-radius:50%;background:var(--s2);color:var(--lime);display:grid;place-items:center}
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:var(--r-hero);padding:18px 20px;color:var(--lime-ink);background:linear-gradient(160deg,#c9f85a,#a8e02d);margin:8px 0 12px}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:8px}.lbl{font-weight:700;font-size:14px}
+.st{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:0 12px 0 8px;border-radius:99px;background:#10200a;color:var(--ink);font-size:13px;font-weight:700}
+.hero[data-s=dry] .st .ic{color:var(--warn)}.hero[data-s=ok] .st .ic{color:var(--lime)}.hero[data-s=wet] .st .ic{color:var(--water)}.hero[data-s=none] .st .ic{color:var(--mut)}
+.hero[data-s=none] .hnum b{opacity:.25}.hnum{display:flex;align-items:baseline;margin-top:8px;line-height:.95}.hnum b{font-size:76px;font-weight:800;letter-spacing:-.03em}.hnum span{font-size:30px;font-weight:800;margin-left:2px}
+.hcap{margin-top:8px;font-size:13px;line-height:1.35;color:#10200acc;white-space:pre-line}
+.meter{position:relative;height:10px;border-radius:99px;background:#10200a2e;margin-top:16px}.meter i{display:block;height:100%;width:0;border-radius:99px;background:#10200a;transition:width .9s cubic-bezier(.3,1.2,.5,1)}
+.meter u{position:absolute;top:-5px;width:3px;height:20px;border-radius:2px;background:#fff;box-shadow:0 0 0 1.5px #10200a;margin-left:-1px}
+.mscale{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#10200acc;margin-top:8px}
+.hmid{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin-top:6px}.hl{min-width:0;padding-bottom:6px}.plant{flex:none;width:112px;height:140px;overflow:visible}
+.lf{fill:#5cc84a;transition:fill .8s,transform .9s cubic-bezier(.3,1.4,.5,1);transform-box:fill-box}
+.lf.l{transform-origin:100% 50%;transform:rotate(calc(14deg - var(--d,0)*1deg))}.lf.r{transform-origin:0% 50%;transform:rotate(calc(var(--d,0)*1deg - 14deg))}
+.hero[data-s=dry] .lf{fill:#b2b43e}.hero[data-s=wet] .lf{fill:#3fd05a}
+.swy{transform-box:fill-box;transform-origin:50% 100%;animation:sw 4s ease-in-out infinite}@keyframes sw{50%{transform:rotate(2.5deg)}}
+.chili{transform-box:fill-box;transform-origin:50% 0;animation:sw 3.2s ease-in-out infinite reverse}
+/* bento */
+.bento{display:grid;grid-template-columns:1.15fr 1fr;gap:12px}.bento>*{margin:0}
+.tank{grid-row:span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.tile{background:var(--s1);border-radius:var(--r-card);padding:14px;display:flex;flex-direction:column;gap:2px;min-height:104px}
+.tile b{font-size:20px;line-height:1.2}.disc{width:36px;height:36px;border-radius:50%;background:var(--s2);display:grid;place-items:center;margin-bottom:8px}
+.tile[data-k=on] .disc{background:var(--water);color:#04243a}.tile[data-k=ok] .disc{background:var(--lime);color:var(--lime-ink)}.tile[data-k=bad] .disc{background:var(--bad);color:#2b0904}
+.bucket{width:100%;max-width:170px;aspect-ratio:15/4;border:3px solid var(--water);border-radius:6px 6px 14px 14px;margin:14px auto 12px;position:relative;overflow:hidden;flex:none}.bucket.lg{max-width:300px}.bucket:after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(180deg,transparent 0 calc(25% - 1px),#ffffff38 calc(25% - 1px) 25%)}
+.bucket .fillbar{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(#4cc2ff,#1b6aa5);transition:height .8s}
+.bucket .fillbar.z:before{display:none}.bucket .fillbar:before{content:"";position:absolute;top:-7px;left:-20px;width:200%;height:8px;background:radial-gradient(circle at 10px 8px,#4cc2ff 6.5px,transparent 7.5px) 0 0/20px 8px repeat-x;animation:wv 1.6s linear infinite}@keyframes wv{to{transform:translateX(20px)}}
+.drop{position:absolute;top:-14px;width:9px;height:13px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--water);opacity:0}
+.pumping .drop{animation:dr 1s linear infinite}@keyframes dr{0%{opacity:1;top:-14px}100%{opacity:0;top:100%}}
+.big-n{font-size:30px;font-weight:800;line-height:1}
+/* trend */
+#spark{display:block;width:100%;height:auto;margin-top:6px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}.chp{flex:none;background:var(--s2);border-radius:18px;padding:6px 12px;text-align:center}.chp b{display:block;font-size:17px}.chp small{font-size:12px}.chp.on{background:var(--lime);color:var(--lime-ink)}.chp.on small{color:#10200acc}
+/* water actions */
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.act{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:120px;border-radius:24px;padding:14px 16px;text-align:left;transition:transform .12s,box-shadow .2s}.act:active{transform:scale(.96)}
+.act .disc{margin-bottom:6px}.act b{font-size:17px}.act small{color:inherit;opacity:.78;font-size:12.5px;line-height:1.3}
+.act.w{background:#112f42;color:#cdeeff}.act.w .disc{background:var(--water);color:#04243a}
+.act.a{background:#223510;color:#e6f9bb}.act.a .disc{background:var(--lime);color:var(--lime-ink)}.act.a.on{box-shadow:0 0 0 2px var(--lime)}
+.act.s{background:#40170f;color:#ffd9d3}.act.s .disc{background:var(--bad);color:#2b0904}
+.act.n{background:var(--s2);color:var(--ink)}.act.n .disc{background:var(--s1)}
+.msg{font-size:14px;margin-top:6px;line-height:1.5;word-break:break-word}.msg div+div{margin-top:2px}
+/* camera */
+.vf{position:relative;border-radius:22px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.vf img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.g3{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent calc(33.33% - .5px),#ffffff2e calc(33.33% - .5px) calc(33.33% + .5px),transparent calc(33.33% + .5px) calc(66.66% - .5px),#ffffff2e calc(66.66% - .5px) calc(66.66% + .5px),transparent calc(66.66% + .5px)),linear-gradient(0deg,transparent calc(33.33% - .5px),#ffffff2e calc(33.33% - .5px) calc(33.33% + .5px),transparent calc(33.33% + .5px) calc(66.66% - .5px),#ffffff2e calc(66.66% - .5px) calc(66.66% + .5px),transparent calc(66.66% + .5px))}
+.cr{position:absolute;width:30px;height:30px;border:3px solid var(--lime);pointer-events:none}.cr.tl{top:12px;left:12px;border-right:0;border-bottom:0;border-top-left-radius:10px}.cr.tr{top:12px;right:12px;border-left:0;border-bottom:0;border-top-right-radius:10px}.cr.bl{bottom:12px;left:12px;border-right:0;border-top:0;border-bottom-left-radius:10px}.cr.br{bottom:12px;right:12px;border-left:0;border-top:0;border-bottom-right-radius:10px}
+.live{position:absolute;top:18px;right:52px;display:flex;align-items:center;gap:6px;background:#000a;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:800;letter-spacing:.06em}.live i{width:8px;height:8px;border-radius:50%;background:var(--bad);animation:bl 1.2s infinite}@keyframes bl{50%{opacity:.25}}
+.vfe{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:14px}
+/* terminal */
+pre{background:#070c05;color:#c9f27a;border-radius:16px;padding:12px;height:300px;overflow:auto;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;margin:0}
+/* settings */
+.rs{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.rs:first-of-type{border-top:0}.rs>span{flex:1;min-width:0}.rs b{display:block;font-size:15px}.rs small{display:block}
+.rs input[type=number]{width:88px;min-height:42px;text-align:right}
+.sw{position:relative;flex:none;width:52px;height:30px}.sw input{position:absolute;inset:0;opacity:0;margin:0;width:100%;height:100%;cursor:pointer;z-index:1}.sw i{position:absolute;inset:0;border-radius:99px;background:#33452a;transition:background .2s}.sw i:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#cfd9c0;transition:transform .2s}.sw input:checked+i{background:var(--lime)}.sw input:checked+i:after{transform:translateX(22px);background:var(--lime-ink)}.sw input:focus-visible+i{outline:2px solid var(--lime);outline-offset:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* nav + stop bar */
+nav{position:fixed;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),406px);bottom:calc(10px + env(safe-area-inset-bottom,0px));background:#121b0cf2;border:1px solid var(--line);border-radius:32px;display:flex;justify-content:space-around;align-items:center;padding:6px;z-index:7;box-shadow:0 10px 30px #000a;backdrop-filter:blur(10px)}
+nav button{display:grid;justify-items:center;gap:2px;min-width:58px;min-height:50px;padding:6px 4px;border-radius:20px;color:var(--mut);font-size:12px;font-weight:600}nav button.on{color:var(--lime)}
+nav button.mid{background:var(--lime);color:var(--lime-ink);border-radius:50%;width:62px;height:62px;min-width:62px;margin-top:-30px;box-shadow:0 0 24px #b7f33c77,0 0 0 5px var(--bg)}nav button.mid .ic{width:28px;height:28px}
+#stopbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));width:min(calc(100% - 28px),398px);background:#112f42;border:1px solid #1f5c80;border-radius:20px;padding:8px 8px 8px 14px;display:flex;align-items:center;gap:10px;z-index:6;color:#cdeeff;font-weight:700;animation:in .3s}
+/* toasts + sheet */
+#toasts{position:fixed;z-index:95;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);width:min(calc(100% - 20px),410px);display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{pointer-events:auto;display:flex;gap:12px;align-items:flex-start;background:#1d2b14;border:1px solid var(--line);border-radius:20px;padding:12px;box-shadow:0 10px 30px #000a;animation:tin .35s cubic-bezier(.2,.9,.3,1.1);transition:opacity .3s,transform .3s}@keyframes tin{from{opacity:0;transform:translateY(-16px)}}
+.toast.out{opacity:0;transform:translateY(-12px)}.toast>div{flex:1;min-width:0}.toast b{display:block;font-size:15px}.toast p{font-size:13.5px;color:#cfdac2;margin-top:1px}.toast>button{width:40px;height:40px;margin:-6px -6px 0 0;display:grid;place-items:center;color:var(--mut);flex:none}
+.tic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--s2)}
+.info .tic{background:#12354a;color:var(--water)}.ok .tic{background:#2a3d12;color:var(--lime)}.warn .tic{background:#473511;color:var(--warn)}.bad .tic{background:#4a1d17;color:var(--bad)}
+.sheet{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center}
+.scrim{position:absolute;inset:0;background:#000b;animation:fd .25s}@keyframes fd{from{opacity:0}}
+.panel{position:relative;width:min(100%,430px);max-height:80vh;overflow:auto;background:var(--s1);border-radius:28px 28px 0 0;padding:8px 18px calc(22px + env(safe-area-inset-bottom,0px));animation:up .3s cubic-bezier(.2,.9,.3,1)}@keyframes up{from{transform:translateY(40px);opacity:0}}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:4px auto 14px}
+.panel h2{font-size:20px}
+.ni{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);position:relative}.ni:first-of-type{border-top:0}.ni>div{flex:1;min-width:0}.ni b{display:block;font-size:15px}.ni p{font-size:13.5px;color:#cfdac2}.ni small{font-size:12px}
+.ni.un:before{content:"";position:absolute;right:0;top:16px;width:9px;height:9px;border-radius:50%;background:var(--lime)}
+.none{padding:34px 0;text-align:center;color:var(--mut)}
+/* intro */
+#intro{position:fixed;inset:0;z-index:100;background:var(--bg);transition:transform .6s cubic-bezier(.7,0,.3,1),opacity .6s;overflow:hidden}#intro.out{transform:translateY(-8%);opacity:0;pointer-events:none}.nointro #intro{display:none}
+.ibg{position:absolute;inset:0;background:radial-gradient(420px 380px at 50% 26%,#3a6b17aa,transparent 70%),radial-gradient(600px 300px at 50% 110%,#26420f,transparent 70%)}
+.irows{position:absolute;left:0;right:0;bottom:0;width:100%;height:30%;opacity:.5;-webkit-mask-image:linear-gradient(transparent,#000 65%);mask-image:linear-gradient(transparent,#000 65%)}.irows path{stroke:#3b5a25;stroke-width:2;fill:none;stroke-dasharray:14 12;animation:mv 1.4s linear infinite}@keyframes mv{to{stroke-dashoffset:-26}}
+.iw{position:relative;max-width:430px;height:100%;margin:0 auto;display:flex;flex-direction:column}
+.skip{align-self:flex-end;margin:calc(14px + env(safe-area-inset-top,0px)) 16px 0;min-height:44px;padding:0 14px;color:var(--mut);font-weight:700}
+.slides{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.slides::-webkit-scrollbar{display:none}
+.sl{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px 30px;gap:14px}
+.sl h2{font-size:30px;line-height:1.12}.sl h2 b{color:var(--lime)}.sl p{color:#c6d3b6;font-size:16px;line-height:1.5;max-width:320px}
+.art{width:230px;height:230px;display:grid;place-items:center;position:relative;margin-bottom:6px}
+.art .mk{width:176px;height:212px;animation:fl 4.5s ease-in-out infinite;filter:drop-shadow(0 18px 24px #000a)}@keyframes fl{50%{transform:translateY(-10px)}}
+.orb{width:128px;height:128px;border-radius:50%;background:var(--s2);border:1px solid var(--line);display:grid;place-items:center;color:var(--lime);position:relative}.orb .ic{width:56px;height:56px;stroke-width:1.6}
+.orb.w{color:var(--water)}.orb:before,.orb:after{content:"";position:absolute;inset:0;border-radius:50%;border:1.5px solid currentColor;opacity:0;animation:rg 3s ease-out infinite}.orb:after{animation-delay:1.5s}@keyframes rg{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.9);opacity:0}}
+.wmark{height:32px;width:170px}
+.ibtns .btn.ghost{background:var(--bg)}.ibtns{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;margin-top:6px}
+.idots{display:flex;justify-content:center;gap:8px;padding:8px 0}.idots i{width:8px;height:8px;border-radius:99px;background:#3a4d2c;transition:all .3s}.idots i.on{width:26px;background:var(--lime)}
+.inext{margin:6px 22px calc(22px + env(safe-area-inset-bottom,0px));min-height:54px;font-size:17px}
+@media(min-width:700px){body{box-shadow:0 0 40px #000}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="logo" viewBox="24 26 194 234"><path d="M33.40 100.00L120.00 150.00L120.00 250.00L33.40 200.00Z" fill="#8b5a35"/><path d="M120.00 150.00L206.60 100.00L206.60 200.00L120.00 250.00Z" fill="#a97748"/><path d="M52.45 173.00L61.11 178.00L61.11 185.00L52.45 180.00Z" fill="#6b4126"/><path d="M83.63 209.00L92.29 214.00L92.29 221.00L83.63 216.00Z" fill="#c99a66"/><path d="M97.48 191.00L106.14 196.00L106.14 203.00L97.48 198.00Z" fill="#6b4126"/><path d="M145.98 207.00L154.64 202.00L154.64 209.00L145.98 214.00Z" fill="#c99a66"/><path d="M173.69 177.00L182.35 172.00L182.35 179.00L173.69 184.00Z" fill="#6b4126"/><path d="M185.82 196.00L194.48 191.00L194.48 198.00L185.82 203.00Z" fill="#c99a66"/><path d="M33.40 100.00L120.00 150.00L120.00 177.00L119.10 176.48L118.20 175.97L117.29 175.46L116.39 174.96L115.49 174.51L114.59 174.12L113.69 173.84L112.78 173.75L111.88 173.92L110.98 174.42L110.08 175.26L109.17 176.38L108.27 177.64L107.37 178.78L106.47 179.52L105.57 179.63L104.66 178.96L103.76 177.57L102.86 175.61L101.96 173.35L101.06 171.08L100.15 169.00L99.25 167.24L98.35 165.83L97.45 164.72L96.55 163.84L95.64 163.12L94.74 162.50L93.84 161.93L92.94 161.39L92.03 160.86L91.13 160.35L90.23 159.84L89.33 159.36L88.43 158.92L87.52 158.56L86.62 158.35L85.72 158.39L84.82 158.78L83.92 159.65L83.01 161.13L82.11 163.23L81.21 165.90L80.31 168.90L79.41 171.86L78.50 174.32L77.60 175.81L76.70 176.00L75.80 174.77L74.89 172.23L73.99 168.74L73.09 164.73L72.19 160.69L71.29 156.98L70.38 153.83L69.48 151.32L68.58 149.40L67.68 147.97L66.78 146.90L65.87 146.06L64.97 145.38L64.07 144.78L63.17 144.23L62.26 143.70L61.36 143.21L60.46 142.75L59.56 142.35L58.66 142.03L57.75 141.86L56.85 141.89L55.95 142.19L55.05 142.80L54.15 143.75L53.24 145.01L52.34 146.48L51.44 148.01L50.54 149.37L49.64 150.33L48.73 150.68L47.83 150.29L46.93 149.16L46.03 147.36L45.12 145.07L44.22 142.54L43.32 139.98L42.42 137.59L41.52 135.48L40.61 133.70L39.71 132.26L38.81 131.10L37.91 130.16L37.01 129.39L36.10 128.72L35.20 128.12L34.30 127.56L33.40 127.02Z" fill="#46a03a"/><path d="M120.00 150.00L206.60 100.00L206.60 127.03L205.70 127.59L204.80 128.20L203.90 128.90L202.99 129.78L202.09 130.92L201.19 132.46L200.29 134.49L199.39 137.05L198.48 140.07L197.58 143.33L196.68 146.46L195.78 149.03L194.88 150.65L193.97 151.10L193.07 150.39L192.17 148.77L191.27 146.64L190.36 144.44L189.46 142.50L188.56 141.05L187.66 140.13L186.76 139.69L185.85 139.62L184.95 139.81L184.05 140.16L183.15 140.61L182.25 141.10L181.34 141.62L180.44 142.17L179.54 142.75L178.64 143.39L177.74 144.11L176.83 144.95L175.93 145.96L175.03 147.19L174.13 148.66L173.22 150.37L172.32 152.28L171.42 154.31L170.52 156.29L169.62 158.07L168.71 159.48L167.81 160.38L166.91 160.74L166.01 160.56L165.11 159.95L164.20 159.07L163.30 158.09L162.40 157.16L161.50 156.40L160.59 155.87L159.69 155.59L158.79 155.54L157.89 155.68L156.99 155.95L156.08 156.33L155.18 156.77L154.28 157.25L153.38 157.75L152.48 158.26L151.57 158.79L150.67 159.32L149.77 159.88L148.87 160.49L147.97 161.19L147.06 162.03L146.16 163.11L145.26 164.55L144.36 166.45L143.45 168.92L142.55 171.96L141.65 175.49L140.75 179.26L139.85 182.91L138.94 186.02L138.04 188.16L137.14 189.08L136.24 188.69L135.34 187.16L134.43 184.82L133.53 182.12L132.63 179.45L131.73 177.14L130.83 175.36L129.92 174.17L129.02 173.51L128.12 173.27L127.22 173.33L126.31 173.60L125.41 173.99L124.51 174.45L123.61 174.94L122.71 175.45L121.80 175.96L120.90 176.48L120.00 177.00Z" fill="#58b447"/><path d="M120.00 50.00L206.60 100.00L120.00 150.00L33.40 100.00Z" fill="#8ad660"/><path d="M161.57 96.00L167.63 99.50L161.57 103.00L155.51 99.50Z" fill="#74c84d"/><path d="M83.63 89.00L90.12 92.75L83.63 96.50L77.13 92.75Z" fill="#74c84d"/><path d="M33.40 127.02L34.30 127.56L35.20 128.12L36.10 128.72L37.01 129.39L37.91 130.16L38.81 131.10L39.71 132.26L40.61 133.70L41.52 135.48L42.42 137.59L43.32 139.98L44.22 142.54L45.12 145.07L46.03 147.36L46.93 149.16L47.83 150.29L48.73 150.68L49.64 150.33L50.54 149.37L51.44 148.01L52.34 146.48L53.24 145.01L54.15 143.75L55.05 142.80L55.95 142.19L56.85 141.89L57.75 141.86L58.66 142.03L59.56 142.35L60.46 142.75L61.36 143.21L62.26 143.70L63.17 144.23L64.07 144.78L64.97 145.38L65.87 146.06L66.78 146.90L67.68 147.97L68.58 149.40L69.48 151.32L70.38 153.83L71.29 156.98L72.19 160.69L73.09 164.73L73.99 168.74L74.89 172.23L75.80 174.77L76.70 176.00L77.60 175.81L78.50 174.32L79.41 171.86L80.31 168.90L81.21 165.90L82.11 163.23L83.01 161.13L83.92 159.65L84.82 158.78L85.72 158.39L86.62 158.35L87.52 158.56L88.43 158.92L89.33 159.36L90.23 159.84L91.13 160.35L92.03 160.86L92.94 161.39L93.84 161.93L94.74 162.50L95.64 163.12L96.55 163.84L97.45 164.72L98.35 165.83L99.25 167.24L100.15 169.00L101.06 171.08L101.96 173.35L102.86 175.61L103.76 177.57L104.66 178.96L105.57 179.63L106.47 179.52L107.37 178.78L108.27 177.64L109.17 176.38L110.08 175.26L110.98 174.42L111.88 173.92L112.78 173.75L113.69 173.84L114.59 174.12L115.49 174.51L116.39 174.96L117.29 175.46L118.20 175.97L119.10 176.48L120.00 177.00" fill="none" stroke="#2b1810" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M120.00 177.00L120.90 176.48L121.80 175.96L122.71 175.45L123.61 174.94L124.51 174.45L125.41 173.99L126.31 173.60L127.22 173.33L128.12 173.27L129.02 173.51L129.92 174.17L130.83 175.36L131.73 177.14L132.63 179.45L133.53 182.12L134.43 184.82L135.34 187.16L136.24 188.69L137.14 189.08L138.04 188.16L138.94 186.02L139.85 182.91L140.75 179.26L141.65 175.49L142.55 171.96L143.45 168.92L144.36 166.45L145.26 164.55L146.16 163.11L147.06 162.03L147.97 161.19L148.87 160.49L149.77 159.88L150.67 159.32L151.57 158.79L152.48 158.26L153.38 157.75L154.28 157.25L155.18 156.77L156.08 156.33L156.99 155.95L157.89 155.68L158.79 155.54L159.69 155.59L160.59 155.87L161.50 156.40L162.40 157.16L163.30 158.09L164.20 159.07L165.11 159.95L166.01 160.56L166.91 160.74L167.81 160.38L168.71 159.48L169.62 158.07L170.52 156.29L171.42 154.31L172.32 152.28L173.22 150.37L174.13 148.66L175.03 147.19L175.93 145.96L176.83 144.95L177.74 144.11L178.64 143.39L179.54 142.75L180.44 142.17L181.34 141.62L182.25 141.10L183.15 140.61L184.05 140.16L184.95 139.81L185.85 139.62L186.76 139.69L187.66 140.13L188.56 141.05L189.46 142.50L190.36 144.44L191.27 146.64L192.17 148.77L193.07 150.39L193.97 151.10L194.88 150.65L195.78 149.03L196.68 146.46L197.58 143.33L198.48 140.07L199.39 137.05L200.29 134.49L201.19 132.46L202.09 130.92L202.99 129.78L203.90 128.90L204.80 128.20L205.70 127.59L206.60 127.03" fill="none" stroke="#2b1810" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><path d="M120.00 50.00L206.60 100.00L206.60 200.00L120.00 250.00L33.40 200.00L33.40 100.00Z" fill="none" stroke="#2b1810" stroke-width="5.5" stroke-linejoin="round"/><path d="M33.40 100.00L120.00 150.00L206.60 100.00" fill="none" stroke="#2b1810" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M120.00 150.00L120.00 250.00" fill="none" stroke="#2b1810" stroke-width="5.5" stroke-linecap="round"/><ellipse cx="120.0" cy="102.0" rx="17" ry="8.5" fill="#8b5a35" stroke="#2b1810" stroke-width="3.5"/><g transform="translate(120.0 100.0)"><path d="M0 0C0 -12 2 -26 0 -38" fill="none" stroke="#2b1810" stroke-width="8" stroke-linecap="round"/><path d="M0 0C0 -12 2 -26 0 -38" fill="none" stroke="#3a9d3f" stroke-width="3.6" stroke-linecap="round"/><path d="M0 -28C-6 -46 -30 -50 -42 -40C-38 -26 -16 -20 0 -28Z" fill="#4fbf45" stroke="#2b1810" stroke-width="4" stroke-linejoin="round"/><path d="M-3 -29L-30 -38" stroke="#2f7d2f" stroke-width="2" stroke-linecap="round" opacity=".65"/><path d="M0 -36C6 -58 34 -66 50 -54C46 -34 20 -28 0 -36Z" fill="#b7f33c" stroke="#2b1810" stroke-width="4" stroke-linejoin="round"/><path d="M3 -37L34 -52" stroke="#2f7d2f" stroke-width="2" stroke-linecap="round" opacity=".65"/></g><g transform="translate(199 66)"><path d="M0 -17C7 -7 12 -1 12 6A12 12 0 0 1 -12 6C-12 -1 -7 -7 0 -17Z" fill="#4cc2ff" stroke="#2b1810" stroke-width="4" stroke-linejoin="round"/><path d="M-6 6A6 6 0 0 0 -2 12" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".85"/></g></symbol>
+<symbol id="wm" viewBox="-4 -78 550.5 106"><g style="fill:var(--w1);stroke:var(--w1);stroke-width:3.2;stroke-linejoin:round"><path d="M4.2 -21.0H22.400000000000002Q22.8 -17.1 25.1 -15.05Q27.400000000000002 -13.0 31.1 -13.0Q34.9 -13.0 37.1 -14.75Q39.300000000000004 -16.5 39.300000000000004 -19.6Q39.300000000000004 -22.200000000000003 37.550000000000004 -23.900000000000002Q35.800000000000004 -25.6 33.25 -26.700000000000003Q30.700000000000003 -27.8 26.0 -29.200000000000003Q19.200000000000003 -31.3 14.900000000000002 -33.4Q10.600000000000001 -35.5 7.500000000000001 -39.6Q4.4 -43.7 4.4 -50.300000000000004Q4.4 -60.1 11.5 -65.65Q18.6 -71.2 30.0 -71.2Q41.6 -71.2 48.7 -65.65Q55.800000000000004 -60.1 56.300000000000004 -50.2H37.800000000000004Q37.6 -53.6 35.3 -55.55Q33.0 -57.5 29.400000000000002 -57.5Q26.3 -57.5 24.4 -55.85Q22.5 -54.2 22.5 -51.1Q22.5 -47.7 25.700000000000003 -45.800000000000004Q28.900000000000002 -43.900000000000006 35.7 -41.7Q42.5 -39.400000000000006 46.75 -37.300000000000004Q51.0 -35.2 54.1 -31.200000000000003Q57.2 -27.200000000000003 57.2 -20.900000000000002Q57.2 -14.9 54.150000000000006 -10.0Q51.1 -5.1000000000000005 45.3 -2.2Q39.5 0.7000000000000001 31.6 0.7000000000000001Q23.900000000000002 0.7000000000000001 17.8 -1.7999999999999998Q11.700000000000001 -4.3 8.05 -9.200000000000001Q4.4 -14.100000000000001 4.2 -21.0Z M64.3 -27.900000000000002Q64.3 -36.5 68.1 -43.05Q71.9 -49.6 78.5 -53.1Q85.1 -56.6 93.3 -56.6Q101.5 -56.6 108.1 -53.1Q114.7 -49.6 118.5 -43.05Q122.30000000000001 -36.5 122.30000000000001 -27.900000000000002Q122.30000000000001 -19.3 118.45 -12.75Q114.6 -6.2 107.95 -2.7Q101.30000000000001 0.8 93.1 0.8Q84.9 0.8 78.35 -2.7Q71.8 -6.2 68.05 -12.700000000000001Q64.3 -19.200000000000003 64.3 -27.900000000000002ZM104.9 -27.900000000000002Q104.9 -34.6 101.55000000000001 -38.2Q98.2 -41.800000000000004 93.3 -41.800000000000004Q88.3 -41.800000000000004 85.0 -38.25Q81.7 -34.7 81.7 -27.900000000000002Q81.7 -21.200000000000003 84.95 -17.6Q88.2 -14.0 93.1 -14.0Q98.0 -14.0 101.45 -17.6Q104.9 -21.200000000000003 104.9 -27.900000000000002Z M129.8 -70.8Q129.8 -74.8 132.65 -77.45Q135.5 -80.10000000000001 140.0 -80.10000000000001Q144.4 -80.10000000000001 147.25 -77.45Q150.1 -74.8 150.1 -70.8Q150.1 -66.9 147.25 -64.25Q144.4 -61.6 140.0 -61.6Q135.5 -61.6 132.65 -64.25Q129.8 -66.9 129.8 -70.8ZM148.5 -55.800000000000004V0.0H131.4V-55.800000000000004Z M178.0 -74.0V0.0H160.89999999999998V-74.0Z"/></g><g transform="translate(210.20 0)" style="fill:var(--w2);stroke:var(--w2);stroke-width:3.2;stroke-linejoin:round"><path d="M62.2 -19.1Q62.2 -10.3 56.050000000000004 -5.15Q49.900000000000006 0.0 38.900000000000006 0.0H6.2V-70.2H37.800000000000004Q48.5 -70.2 54.55 -65.30000000000001Q60.6 -60.400000000000006 60.6 -52.0Q60.6 -45.800000000000004 57.35 -41.7Q54.1 -37.6 48.7 -36.0Q54.800000000000004 -34.7 58.5 -29.950000000000003Q62.2 -25.200000000000003 62.2 -19.1ZM23.3 -41.800000000000004H34.5Q38.7 -41.800000000000004 40.95 -43.650000000000006Q43.2 -45.5 43.2 -49.1Q43.2 -52.7 40.95 -54.6Q38.7 -56.5 34.5 -56.5H23.3ZM44.900000000000006 -21.400000000000002Q44.900000000000006 -25.1 42.45 -27.200000000000003Q40.0 -29.3 35.7 -29.3H23.3V-13.8H35.9Q40.2 -13.8 42.550000000000004 -15.75Q44.900000000000006 -17.7 44.900000000000006 -21.400000000000002Z M127.20000000000002 -55.800000000000004V0.0H110.10000000000001V-7.6000000000000005Q107.5 -3.9000000000000004 103.05000000000001 -1.6500000000000001Q98.60000000000001 0.6000000000000001 93.2 0.6000000000000001Q86.80000000000001 0.6000000000000001 81.9 -2.25Q77.0 -5.1000000000000005 74.30000000000001 -10.5Q71.60000000000001 -15.9 71.60000000000001 -23.200000000000003V-55.800000000000004H88.60000000000001V-25.5Q88.60000000000001 -19.900000000000002 91.5 -16.8Q94.4 -13.700000000000001 99.30000000000001 -13.700000000000001Q104.30000000000001 -13.700000000000001 107.20000000000002 -16.8Q110.10000000000001 -19.900000000000002 110.10000000000001 -25.5V-55.800000000000004Z M160.70000000000002 -56.6Q166.20000000000002 -56.6 170.75 -54.3Q175.3 -52.0 177.9 -48.1V-74.0H195.0V0.0H177.9V-8.0Q175.5 -4.0 171.05 -1.6Q166.60000000000002 0.8 160.70000000000002 0.8Q153.8 0.8 148.20000000000002 -2.7500000000000004Q142.60000000000002 -6.300000000000001 139.35000000000002 -12.850000000000001Q136.10000000000002 -19.400000000000002 136.10000000000002 -28.0Q136.10000000000002 -36.6 139.35000000000002 -43.1Q142.60000000000002 -49.6 148.20000000000002 -53.1Q153.8 -56.6 160.70000000000002 -56.6ZM165.70000000000002 -41.7Q160.60000000000002 -41.7 157.05 -38.05Q153.5 -34.4 153.5 -28.0Q153.5 -21.6 157.05 -17.85Q160.60000000000002 -14.100000000000001 165.70000000000002 -14.100000000000001Q170.8 -14.100000000000001 174.35000000000002 -17.8Q177.9 -21.5 177.9 -27.900000000000002Q177.9 -34.300000000000004 174.35000000000002 -38.0Q170.8 -41.7 165.70000000000002 -41.7Z M228.60000000000002 -56.6Q234.10000000000002 -56.6 238.65000000000003 -54.3Q243.20000000000002 -52.0 245.8 -48.1V-74.0H262.90000000000003V0.0H245.8V-8.0Q243.40000000000003 -4.0 238.95000000000005 -1.6Q234.50000000000003 0.8 228.60000000000002 0.8Q221.70000000000002 0.8 216.10000000000002 -2.7500000000000004Q210.50000000000003 -6.300000000000001 207.25000000000003 -12.850000000000001Q204.00000000000003 -19.400000000000002 204.00000000000003 -28.0Q204.00000000000003 -36.6 207.25000000000003 -43.1Q210.50000000000003 -49.6 216.10000000000002 -53.1Q221.70000000000002 -56.6 228.60000000000002 -56.6ZM233.60000000000002 -41.7Q228.50000000000003 -41.7 224.95000000000005 -38.05Q221.40000000000003 -34.4 221.40000000000003 -28.0Q221.40000000000003 -21.6 224.95000000000005 -17.85Q228.50000000000003 -14.100000000000001 233.60000000000002 -14.100000000000001Q238.70000000000002 -14.100000000000001 242.25 -17.8Q245.8 -21.5 245.8 -27.900000000000002Q245.8 -34.300000000000004 242.25 -38.0Q238.70000000000002 -41.7 233.60000000000002 -41.7Z M332.3 -55.800000000000004 297.3 26.5H278.90000000000003L291.70000000000005 -1.9000000000000001L269.0 -55.800000000000004H288.1L301.0 -20.900000000000002L313.8 -55.800000000000004Z"/></g></symbol>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v9.5h13V10M10 19.5v-5h4v5"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5h3l1.5-2.5h7L17 8.5h3v10H4zM12 16.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/></symbol>
+<symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3.5c3.4 4 5.5 6.8 5.5 9.8a5.5 5.5 0 0 1-11 0c0-3 2.1-5.8 5.5-9.8z"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM7.5 10l3 2.5-3 2.5M13 15h4"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 4.5v5M9 14.5v5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-bluetooth" viewBox="0 0 24 24"><path d="M7 8l10 8-5 4.5V3.5L17 8 7 16"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.5 3.5h5M10.5 3.5v6L5.5 18a1.8 1.8 0 0 0 1.6 2.5h9.8a1.8 1.8 0 0 0 1.6-2.5l-5-8.5v-6M8 14.5h8"/></symbol>
+<symbol id="i-auto" viewBox="0 0 24 24"><path d="M19 8a7.5 7.5 0 0 0-13-1.5L4.5 8.5M4.5 4v4.5H9M5 16a7.5 7.5 0 0 0 13 1.5l1.5-2M19.5 20v-4.5H15"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><path d="M8 6.5h8A1.5 1.5 0 0 1 17.5 8v8a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 16V8A1.5 1.5 0 0 1 8 6.5z"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 7h11M9 12h11M9 17h11M4.5 7h.01M4.5 12h.01M4.5 17h.01"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5l7 2.8v5.4c0 4.2-2.9 7.3-7 8.8-4.1-1.5-7-4.6-7-8.8V6.3zM8.8 12l2.4 2.4 4-4.4"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 15.5H3zM12 10v4.2M12 17h.01"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v5.5M12 7.8h.01"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5.2l3.2 2"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 11l4.5 4.5 4.5-4.5M5 19.5h14"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-tank" viewBox="0 0 24 24"><path d="M5 6h14l-1.6 13.2a1.5 1.5 0 0 1-1.5 1.3H8.1a1.5 1.5 0 0 1-1.5-1.3zM8 6c0-1.7 1.8-3 4-3s4 1.3 4 3"/></symbol>
+</defs></svg>
+
+<div id="toasts" aria-live="polite"></div>
+
+<div id="intro" role="dialog" aria-label="Welcome to Soil Buddy"><div class="ibg"></div>
+<svg class="irows" viewBox="0 70 400 150" preserveAspectRatio="none" aria-hidden="true"><path d="M200 20L-120 220M200 20L-10 220M200 20L90 220M200 20L200 220M200 20L310 220M200 20L410 220M200 20L520 220"/></svg>
+<div class="iw"><button class="skip" id="skip">Skip</button>
+<div class="slides" id="slides">
+<section class="sl"><div class="art"><svg class="mk" aria-hidden="true"><use href="#logo" width="100%" height="100%"/></svg></div><h2 class="sr">Soil Buddy</h2><svg class="wmark" role="img" aria-label="Soil Buddy"><use href="#wm" width="100%" height="100%"/></svg><p>Live soil moisture and water level from your board, on one calm screen.</p></section>
+<section class="sl"><div class="art"><div class="orb w"><svg class="ic"><use href="#i-drop"/></svg></div></div><h2>Water with <b>care</b></h2><p>Pump tests are supervised, and the water guard blocks dry runs. Stop stays one tap away on every screen.</p></section>
+<section class="sl"><div class="art"><div class="orb"><svg class="ic"><use href="#i-bell"/></svg></div></div><h2>Know when it is <b>thirsty</b></h2><p>Get alerts for dry soil, a low tank and pump events. The app must stay open and connected to hear the board.</p><div class="ibtns"><button class="btn" id="enable">Turn on alerts</button><button class="btn ghost" id="later">Not now</button></div></section>
+</div>
+<div class="idots" id="idots"><i class="on"></i><i></i><i></i></div>
+<button class="btn inext" id="next">Next</button></div></div>
+
+<header class="top"><div class="brand"><svg class="lm" role="img" aria-label="Soil Buddy"><use href="#logo" width="100%" height="100%"/></svg><svg class="wm" aria-hidden="true"><use href="#wm" width="100%" height="100%"/></svg></div>
+<span class="pill" id="link" data-st="off"><i class="dot"></i><span id="linkt">Offline</span></span>
+<button class="ibtn" id="bell" aria-label="Alerts"><svg class="ic"><use href="#i-bell"/></svg><span class="badge" id="badge" hidden>0</span></button></header>
+
+<section class="tab on" id="home">
+<div class="card empty" id="empty"><div class="eic"><svg class="ic"><use href="#i-bluetooth"/></svg></div><div><h3>Connect your board</h3><small>Switch on the Soil Buddy RE board, then tap Connect. No board nearby? Try the demo.</small></div><div class="row"><button class="btn" id="bt">Connect</button><button class="btn alt" id="rec" hidden>Reconnect</button><button class="btn alt" id="demo">Try demo</button></div></div>
+
+<div class="hero" id="hero" data-s="none"><div class="hrow"><span class="lbl">Soil moisture index</span><span class="st"><svg class="ic"><use id="stu" href="#i-clock"/></svg><span id="stw">No data</span></span></div>
+<div class="hmid"><div class="hl"><div class="hnum"><b id="soil">—</b><span>%</span></div><p class="hcap" id="age">Waiting for the board</p></div>
+<svg class="plant" viewBox="-60 -100 120 150" aria-hidden="true"><g class="swy"><path d="M0 -4C1 -30 -1 -58 0 -84" stroke="#2f7d32" stroke-width="4" fill="none" stroke-linecap="round"/>
+<g transform="translate(0 -34)"><path class="lf l" d="M0 0C-10 -13 -32 -15 -44 -5C-33 8 -10 9 0 0Z"/></g><g transform="translate(0 -34)"><path class="lf r" d="M0 0C10 -13 32 -15 44 -5C33 8 10 9 0 0Z"/></g>
+<g transform="translate(0 -56)"><path class="lf l" d="M0 0C-8 -10 -26 -12 -36 -4C-27 6 -8 7 0 0Z"/></g><g transform="translate(0 -56)"><path class="lf r" d="M0 0C8 -10 26 -12 36 -4C27 6 8 7 0 0Z"/></g>
+<g transform="translate(0 -84)"><path class="lf l" d="M0 0C-6 -9 -18 -10 -26 -3C-19 5 -6 6 0 0Z"/></g><g transform="translate(0 -84)"><path class="lf r" d="M0 0C6 -9 18 -10 26 -3C19 5 6 6 0 0Z"/></g>
+<g transform="translate(6 -44)"><g class="chili"><path d="M0 0C6 5 9 18 5 32C3 36 -1 34 -1 30C-3 18 -3 6 0 0Z" fill="#e5393b"/><path d="M-3 0h6v3h-6z" fill="#2f7d32"/></g></g>
+<g transform="translate(-7 -66)"><g class="chili"><path d="M0 0C5 4 7 14 4 25C2 28 -1 27 -1 24C-2 14 -3 5 0 0Z" fill="#e5393b"/><path d="M-3 0h5v2.5h-5z" fill="#2f7d32"/></g></g></g>
+<path d="M-30 -6H30L24 44H-24Z" fill="#c8793a"/><rect x="-34" y="-12" width="68" height="11" rx="5.5" fill="#d98b4a"/><ellipse cx="0" cy="-8" rx="26" ry="3.2" fill="#4a2f1b"/></svg></div>
+<div class="meter"><i id="mfill"></i><u id="mtick"></u></div><div class="mscale"><span>Dry</span><span id="mt"></span><span>Wet</span></div></div>
+
+<div class="bento"><div class="card tank"><small>Water tank</small><div class="bucket"><i class="fillbar"></i><i class="drop" style="left:28%"></i><i class="drop" style="left:52%;animation-delay:-.4s"></i><i class="drop" style="left:74%;animation-delay:-.7s"></i></div><div class="big-n"><span class="cmv">—</span><small> cm</small></div><small id="cap">estimate</small></div>
+<div class="tile" id="t-pump" data-k=""><span class="disc"><svg class="ic"><use href="#i-drop"/></svg></span><b id="pump">—</b><small id="mode">Pump</small></div>
+<div class="tile" id="t-guard" data-k=""><span class="disc"><svg class="ic"><use href="#i-shield"/></svg></span><b id="guard">—</b><small>Water guard</small></div></div>
+
+<div class="card"><div class="row sp"><h3>Trend</h3><small id="trange"></small></div><svg id="spark" viewBox="0 0 320 104" role="img" aria-label="Soil moisture trend"></svg><div class="chips" id="chips"></div><small class="note">Soil % is a relative ADC index and the tank level is an estimate from the sensor reading, so neither is a calibrated measurement.</small></div></section>
+
+<section class="tab" id="cams"><div class="card" style="padding:12px"><div class="vf"><img id="cam" alt="Camera stream" hidden><div class="g3"></div><i class="cr tl"></i><i class="cr tr"></i><i class="cr bl"></i><i class="cr br"></i><span class="live" id="live" hidden><i></i>LIVE</span><div class="vfe" id="vfe"><svg class="ic big"><use href="#i-camera"/></svg><span>No stream yet</span></div></div></div>
+<div class="card"><label class="f" for="ip">ESP32-CAM address</label><div class="row" style="margin-top:6px;flex-wrap:nowrap"><input type="text" id="ip" inputmode="url" autocomplete="off" placeholder="192.168.4.1" style="flex:1"><button class="btn" id="camgo"><span>Watch</span></button></div><small class="note">Visual observation only. If the browser blocks the stream, open <a id="camlink" target="_blank" rel="noopener" style="color:var(--lime)">the stream link</a> directly.</small></div></section>
+
+<section class="tab" id="water"><div class="card" style="text-align:center"><small>Water tank</small><div class="bucket lg"><i class="fillbar"></i><i class="drop" style="left:28%"></i><i class="drop" style="left:52%;animation-delay:-.4s"></i><i class="drop" style="left:74%;animation-delay:-.7s"></i></div><div class="big-n"><span class="cmv">—</span><small> cm</small></div><small>estimate, not calibrated</small></div>
+<div class="acts"><button class="act w" data-c="pump test" data-confirm="1"><span class="disc"><svg class="ic"><use href="#i-flask"/></svg></span><b>Pump test</b><small>30 s, stay beside it</small></button>
+<button class="act a" id="actauto" data-c="pump auto"><span class="disc"><svg class="ic"><use href="#i-auto"/></svg></span><b>Auto</b><small>Waters by the board's rules</small></button>
+<button class="act s" data-c="pump off"><span class="disc"><svg class="ic"><use href="#i-stop"/></svg></span><b>Stop</b><small>Pump off right now</small></button>
+<button class="act n" data-c="threshold"><span class="disc"><svg class="ic"><use href="#i-list"/></svg></span><b>Rules</b><small>Show the board's rules</small></button></div>
+<div class="card"><small>Board reply</small><div class="msg" id="lastmsg">Press a button above and the board's answer shows here.</div></div>
+<small class="note">Auto starts OFF. Pilot rule: 1 s pulse, 90 s soak, 2 pulses, 5 min break. Pump test skips the water guard, so only run it with the pump submerged and you beside it.</small></section>
+
+<section class="tab" id="term"><div class="card"><pre id="log" aria-label="Board log"></pre><div class="row" style="margin:10px 0;flex-wrap:nowrap"><input type="text" id="cmd" placeholder="help, status, soil, water" autocomplete="off" autocapitalize="off" style="flex:1"><button class="btn" id="go">Send</button></div><div class="row"><button class="btn sm alt" data-c="help">help</button><button class="btn sm alt" data-c="status">status</button><button class="btn sm alt" data-c="soil">soil</button><button class="btn sm alt" data-c="water">water</button><button class="btn sm ghost" id="clr">Clear</button><label class="row note" style="margin:0;gap:6px"><input type="checkbox" id="hex" style="width:18px;height:18px"> hex</label></div></div></section>
+
+<section class="tab" id="setup">
+<div class="card"><h3>Connection</h3><small id="conninfo">Not connected.</small><div class="row" style="margin-top:12px"><button class="btn sm" id="bt2">Connect</button><button class="btn sm alt" id="disc">Disconnect</button><button class="btn sm alt" id="demo2">Start demo</button><button class="btn sm alt" id="inst" hidden><svg class="ic sm"><use href="#i-download"/></svg>Install app</button></div><div class="row" style="margin-top:8px"><button class="btn sm ghost" id="all">List all Bluetooth devices</button></div></div>
+
+<div class="card"><h3>Alerts</h3><small>Alerts only work while this app is open and connected. Closing it disconnects Bluetooth.</small>
+<div style="margin-top:8px"><div class="rs"><span><b>Phone notifications</b><small id="permt">Show alerts when the app is in the background</small></span><label class="sw"><input type="checkbox" id="c-sys" aria-label="Phone notifications"><i></i></label></div>
+<div class="rs"><span><b>Vibrate</b></span><label class="sw"><input type="checkbox" id="c-vib" aria-label="Vibrate"><i></i></label></div>
+<div class="rs"><span><b>Sounds</b></span><label class="sw"><input type="checkbox" id="c-snd" aria-label="Sounds"><i></i></label></div>
+<div class="rs"><span><b>Keep screen on</b><small>While connected, so the page is not frozen</small></span><label class="sw"><input type="checkbox" id="c-awake" aria-label="Keep screen on"><i></i></label></div>
+<div class="rs"><span><b>Dry alert below</b><small>Moisture index, %</small></span><input type="number" inputmode="numeric" id="c-dry" min="0" max="100" aria-label="Dry alert level percent"></div>
+<div class="rs"><span><b>Tank low below</b><small>Estimated level, cm</small></span><input type="number" inputmode="decimal" step="0.1" id="c-tank" min="0" max="4" aria-label="Tank low level in centimetres"></div>
+<div class="rs"><span><b>Repeat dry reminder</b><small>Minutes, 0 = never</small></span><input type="number" inputmode="numeric" id="c-rep" min="0" max="720" aria-label="Repeat reminder minutes"></div>
+<div class="rs"><span><b>No-data warning after</b><small>Seconds without a reply</small></span><input type="number" inputmode="numeric" id="c-stale" min="15" max="600" aria-label="No data warning seconds"></div></div>
+<div class="row" style="margin-top:8px"><button class="btn sm" id="testn">Send test alert</button><button class="btn sm alt" id="snz">Snooze 1 h</button></div></div>
+
+<div class="card"><h3>Dabble link</h3><small>Frame (assumed): FF, version, module, function, 1 arg, length, text, 00. Edit if the board ignores commands. The module is learned from the board's first reply.</small>
+<div class="g2" style="margin-top:12px"><label class="f">Terminal module<input type="text" id="cm" value="02"></label><label class="f">Function<input type="text" id="cf" value="01"></label><label class="f">Extra BLE service UUID<input type="text" id="cu" placeholder="optional"></label></div></div>
+
+<div class="card"><h3>About</h3><small>Soil Buddy RE app v3.1. Made for Chrome or Edge on Android, Windows, Mac and ChromeOS. iPhone and Safari cannot do Web Bluetooth. On Android, use Install app or the browser menu, Add to Home screen.</small><div class="row" style="margin-top:12px"><button class="btn sm alt" id="replay">Replay intro</button></div></div></section>
+
+<div id="stopbar" hidden><svg class="ic"><use href="#i-drop"/></svg><span style="flex:1">Pump running</span><button class="btn bad sm" id="stopnow">Stop</button></div>
+
+<nav aria-label="Main"><button data-t="home" class="on" aria-current="page"><svg class="ic"><use href="#i-home"/></svg><span>Home</span></button><button data-t="cams"><svg class="ic"><use href="#i-camera"/></svg><span>Camera</span></button><button data-t="water" class="mid" aria-label="Water"><svg class="ic"><use href="#i-drop"/></svg></button><button data-t="term"><svg class="ic"><use href="#i-terminal"/></svg><span>Terminal</span></button><button data-t="setup"><svg class="ic"><use href="#i-sliders"/></svg><span>Setup</span></button></nav>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-label="Alerts"><div class="scrim" id="scrim"></div><div class="panel"><div class="grab"></div><div class="row sp" style="margin-bottom:6px"><h2>Alerts</h2><div class="row"><button class="btn sm ghost" id="clearall">Clear</button><button class="btn sm alt" id="closesheet" aria-label="Close"><svg class="ic sm"><use href="#i-close"/></svg></button></div></div><div id="inbox"></div></div></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const ico=(n,c)=>`<svg class="ic${c?' '+c:''}"><use href="#i-${n}"/></svg>`;
+const NUS='6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const S={soil:null,cm:null,cap:4,pump:'--',mode:'--',guard:'--',at:0,rx:0,demo:false,cmd:'',cmdAt:0},H=[],MSG=[];
+const CFG0={sys:false,vib:true,awake:true,dry:30,tankCm:1,rep:30,stale:45,snooze:0};
+let cfg=Object.assign({},CFG0);try{Object.assign(cfg,JSON.parse(ls.get('sb-cfg')||'{}'))}catch(e){}delete cfg.tank;
+const saveCfg=()=>ls.set('sb-cfg',JSON.stringify(cfg));
+let rx=null,tx=null,dev=null,poll=null,buf=[],txt='',tm=null,ft=null,userDisc=false;
+const A={dry:false,tank:false,guard:null,pump:null,stale:false,lastDry:0};
+const tfmt=(t,s)=>new Date(t).toLocaleTimeString([],s?{hour:'2-digit',minute:'2-digit',second:'2-digit'}:{hour:'2-digit',minute:'2-digit'});
+const connected=()=>S.demo||!!(dev&&dev.gatt&&dev.gatt.connected&&rx);
+/* ---------- tabs ---------- */
+function go(t){$$('nav button').forEach(b=>{const on=b.dataset.t===t;b.classList.toggle('on',on);on?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')});$$('.tab').forEach(e=>e.classList.toggle('on',e.id===t));scrollTo(0,0)}
+$$('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+/* ---------- log ---------- */
+const EMO=/[\p{Extended_Pictographic}️‍]/gu;
+const clean=s=>s.replace(EMO,'').replace(/\s{2,}/g,' ').trim();
+function log(s){const l=$('#log');l.textContent+=s+'\n';if(l.textContent.length>20000)l.textContent=l.textContent.slice(-12000);l.scrollTop=l.scrollHeight}
+$('#clr').onclick=()=>{$('#log').textContent=''};
+/* ---------- Dabble ESP32 frame (verified from library source): FF module fn argc [len data..] 00 ---------- */
+let lastRxAt=0,waiting=false,lastReqAt=0,useStatus=false,heard=false;
+const hx=id=>parseInt($(id).value,16)||0;
+const dec=new TextDecoder('utf-8'),sdec=new TextDecoder('utf-8');
+function enc(t){const d=[...new TextEncoder().encode(t)].slice(0,60);return Uint8Array.from([0xFF,hx('#cm'),hx('#cf'),1,d.length,...d,0])}
+function feed(u8){if($('#hex').checked)log('RX '+[...u8].map(b=>b.toString(16).padStart(2,'0')).join(' '));buf.push(...u8);if(buf.length>4000)buf=[];
+ for(;;){const st=buf.indexOf(0xFF);if(st<0){buf=[];return}if(st>0)buf.splice(0,st);
+  if(buf.length<4)return;const n=buf[3];if(n>8){buf.shift();continue}
+  let p=4;const args=[];let need=false;
+  for(let i=0;i<n;i++){if(buf.length<=p){need=true;break}const l=buf[p];if(buf.length<p+1+l){need=true;break}args.push(buf.slice(p+1,p+1+l));p+=1+l}
+  if(need||buf.length<=p)return;
+  if(buf[p]!==0){buf.shift();continue}
+  const mod=buf[1];buf.splice(0,p+1);
+  if(mod===hx('#cm')){lastRxAt=Date.now();if(!heard){heard=true;log('Board is answering (Dabble Terminal OK).')}for(const a of args)text(dec.decode(Uint8Array.from(a)))}}}
+function text(t){txt+=t;let i;while((i=txt.indexOf('\n'))>=0){line(txt.slice(0,i).replace(/\r/g,''));txt=txt.slice(i+1)}
+ clearTimeout(ft);ft=setTimeout(()=>{if(txt.trim()){line(txt.replace(/\r/g,''));txt=''}},400)}
+function compact(l){const a=l.trim().split(',');if(a.length<9)return;S.rx=Date.now();waiting=false;
+ S.soil=+a[1];S.cm=+a[3];S.mode=['OFF / STANDBY','AUTO','TIMED TEST'][+a[5]]||'--';S.pump=a[6]==='1'?'ON':'OFF';S.guard=a[8]==='1'?'PASS':'LOW';
+ S.at=S.rx;const gap=S.demo?2000:30000;if(!H.length||S.at-H[H.length-1].t>=gap-250){H.push({v:S.soil,t:S.at});if(H.length>120)H.shift()}
+ if($('#hex').checked)log(l);render();evaluate()}
+function line(l){if(!l.trim())return;if(l.startsWith('#S,')){compact(l);return}if(/Water guard:/.test(l))waiting=false;log((S.demo?'[DEMO] ':'')+clean(l));parse(l);render();evaluate()}
+/* ---------- parser (edit here if the sketch wording changes) ---------- */
+const TELE=/Soil:|Water:|Pump mode:|Pump state:|Water guard:|Watering demand:|Raw ADC:|HW-038 ADC:|relative index/;
+function parse(l){let m,hit=false;S.rx=Date.now();
+ if(m=l.match(/Soil:\s*(-?[\d.]+)\s*%/)||l.match(/\((-?[\d.]+)\s*%\s*relative index\)/)){S.soil=+m[1];hit=true}
+ if(m=l.match(/Water:\s*~?([\d.]+)\s*cm(?:\s*\/\s*([\d.]+)\s*cm)?/)||l.match(/Water level:\s*([\d.]+)\s*cm(?:\s*\/\s*([\d.]+)\s*cm)?/)){S.cm=+m[1];if(m[2])S.cap=+m[2]||4}
+ if(m=l.match(/Pump mode:\s*(.+)/))S.mode=clean(m[1]);
+ if(m=l.match(/Pump state:\s*(\w+)/))S.pump=m[1].toUpperCase();
+ if(m=l.match(/Water guard:\s*(\w+)/))S.guard=m[1].toUpperCase();
+ if(/PUMP OFF/.test(l))S.pump='OFF';
+ if(/PUMP TEST STARTED|AUTO watering started/i.test(l))S.pump='ON';
+ if(!TELE.test(l)&&S.cmd&&S.cmd!=='status'&&Date.now()-S.cmdAt<5000){MSG.push(clean(l));if(MSG.length>8)MSG.shift()}
+ if(hit){S.at=S.rx;const gap=S.demo?2000:30000;if(!H.length||S.at-H[H.length-1].t>=gap-250){H.push({v:S.soil,t:S.at});if(H.length>120)H.shift()}}}
+/* ---------- render ---------- */
+function status(){const s=S.soil;if(s==null)return{k:'none',w:'No data',i:'clock'};if(s<cfg.dry)return{k:'dry',w:'Dry',i:'alert'};if(s>=75)return{k:'wet',w:'Wet',i:'drop'};return{k:'ok',w:'Moist',i:'check'}}
+const GW={PASS:'Pass',LOW:'Low water'};
+function render(){const s=S.soil,st=status();
+ $('#soil').textContent=s==null?'—':Math.round(s);$('#hero').dataset.s=st.k;$('#stw').textContent=st.w;$('#stu').setAttribute('href','#i-'+st.i);
+ $('#hero').style.setProperty('--d',s==null?0:clamp((50-s)/50*48,0,48).toFixed(1));
+ $('#mfill').style.width=(s==null?0:clamp(s,0,100))+'%';$('#mtick').style.left=clamp(cfg.dry,0,100)+'%';$('#mt').textContent='Dry alert '+cfg.dry+'%';
+ $('#age').textContent=S.at?(S.demo?'DEMO · ':'')+'Updated '+tfmt(S.at,1)+'\nRelative, not calibrated':'Waiting for the board';
+ const tp=S.cm==null?0:clamp(S.cm/(S.cap||4)*100,0,100);
+ $$('.fillbar').forEach(e=>{e.style.height=tp+'%';e.classList.toggle('z',tp<=0)});$$('.cmv').forEach(e=>e.textContent=S.cm==null?'—':S.cm.toFixed(1));
+ $('#cap').textContent=S.cm==null?'estimate':'of '+S.cap.toFixed(1)+' cm, estimate';
+ const on=S.pump==='ON';$('#pump').textContent=on?'Running':S.pump==='OFF'?'Off':'—';$('#mode').textContent=S.mode==='--'?'Pump':/^OFF/i.test(S.mode)?'Standby':S.mode.charAt(0)+S.mode.slice(1).toLowerCase();$('#t-pump').dataset.k=on?'on':'';
+ const g=S.guard;$('#guard').textContent=g==='--'?'—':(GW[g]||g.charAt(0)+g.slice(1).toLowerCase());$('#t-guard').dataset.k=g==='--'?'':g==='PASS'?'ok':'bad';
+ document.body.classList.toggle('pumping',on);$('#stopbar').hidden=!on;$('#actauto').classList.toggle('on',/AUTO/i.test(S.mode));
+ $('#lastmsg').innerHTML=MSG.length?'':'Press a button above and the board\'s answer shows here.';MSG.forEach(m=>{const d=document.createElement('div');d.textContent=m;$('#lastmsg').appendChild(d)});
+ const ok=connected();$('#empty').hidden=ok;$('#rec').hidden=!(dev&&!ok&&!S.demo);
+ drawTrend();fxSound()}
+function drawTrend(){const el=$('#spark');
+ if(H.length<2){el.innerHTML='<text x="160" y="56" text-anchor="middle" fill="#93a584" font-size="13">The trend appears after two readings</text>';$('#trange').textContent='';$('#chips').innerHTML='';return}
+ const x0=32,x1=314,y0=8,y1=82,lo=Math.min(0,...H.map(p=>p.v)),hi=Math.max(100,...H.map(p=>p.v));
+ const X=i=>x0+i*(x1-x0)/(H.length-1),Y=v=>y1-(v-lo)/(hi-lo)*(y1-y0);
+ const pts=H.map((p,i)=>X(i).toFixed(1)+','+Y(p.v).toFixed(1));
+ let h='<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b7f33c" stop-opacity=".35"/><stop offset="1" stop-color="#b7f33c" stop-opacity="0"/></linearGradient></defs>';
+ [0,50,100].forEach(v=>{if(v<lo||v>hi)return;h+=`<line x1="${x0}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}" stroke="#2a3b1d" stroke-width="1"/><text x="0" y="${Y(v)+4}" fill="#93a584" font-size="11">${v}</text>`});
+ h+=`<line x1="${x0}" x2="${x1}" y1="${Y(cfg.dry)}" y2="${Y(cfg.dry)}" stroke="#ffc24b" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+ h+=`<path d="M${x0},${y1} L${pts.join(' L')} L${x1},${y1}Z" fill="url(#ag)"/><polyline points="${pts.join(' ')}" fill="none" stroke="#b7f33c" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+ const lp=H[H.length-1];h+=`<circle cx="${x1}" cy="${Y(lp.v)}" r="4.5" fill="#b7f33c" stroke="#121b0c" stroke-width="2"/>`;
+ h+=`<text x="${x0}" y="100" fill="#93a584" font-size="11">${tfmt(H[0].t)}</text><text x="${x1}" y="100" text-anchor="end" fill="#93a584" font-size="11">${tfmt(lp.t)}</text>`;
+ el.innerHTML=h;const mins=Math.max(1,Math.round((lp.t-H[0].t)/60000));$('#trange').textContent=S.demo?'Demo':'Last '+mins+' min';
+ $('#chips').innerHTML=H.slice(-6).map((p,i,a)=>`<span class="chp${i==a.length-1?' on':''}"><b>${Math.round(p.v)}</b><small>${tfmt(p.t)}</small></span>`).join('');$('#chips').scrollLeft=1e5}
+/* ---------- sending ---------- */
+async function send(c,quiet){c=c.trim();if(!c)return;if(!quiet)log('> '+c);
+ if(!quiet){S.cmd=c;S.cmdAt=Date.now();if(c!=='status'){MSG.length=0;render()}}
+ if(S.demo)return demoCmd(c);
+ if(!rx){if(!quiet)flash('Not connected','Connect your board first.','warn');return}
+ const d=enc(c);if($('#hex').checked)log('TX '+[...d].map(b=>b.toString(16).padStart(2,'0')).join(' '));try{rx.properties.write?await rx.writeValue(d):await rx.writeValueWithoutResponse(d)}catch(e){log('Send failed: '+e.message);if(!quiet)flash('Send failed',e.message,'bad')}}
+function pollNow(){if(!rx||S.demo)return;if(waiting&&Date.now()-lastReqAt<15000)return;waiting=true;lastReqAt=Date.now();send(useStatus?'status':'s',true)}
+$$('[data-c]').forEach(b=>b.onclick=()=>{if(b.dataset.confirm&&!confirm('Pump test runs 30 s and ignores the water guard. Tank filled, pump submerged, and you are beside it?'))return;send(b.dataset.c)});
+$('#go').onclick=()=>{send($('#cmd').value);$('#cmd').value=''};$('#cmd').onkeydown=e=>e.key==='Enter'&&$('#go').click();
+$('#stopnow').onclick=()=>send('pump off');
+/* ---------- Bluetooth ---------- */
+function setLink(st,t){$('#link').dataset.st=st;$('#linkt').textContent=t;$('#conninfo').textContent=st==='on'?'Connected to '+(dev&&dev.name||'the board')+'.':st==='demo'?'Demo device running. No real board.':st==='busy'?'Connecting.':'Not connected.'}
+function resetState(){Object.assign(S,{soil:null,cm:null,cap:4,pump:'--',mode:'--',guard:'--',at:0,rx:Date.now(),cmd:'',cmdAt:0});H.length=0;MSG.length=0;Object.assign(A,{dry:false,tank:false,guard:null,pump:null,stale:false,lastDry:0});for(const k in cool)delete cool[k]}
+function onVal(e){const v=e.target.value;feed(new Uint8Array(v.buffer,v.byteOffset,v.byteLength))}
+function onDrop(){clearInterval(poll);rx=tx=null;unlock();setLink('off','Offline');
+ if(!userDisc)notify({key:'conn',level:'bad',title:'Connection lost',text:'The board is out of range or switched off. Tap Reconnect on Home.',cool:0});render()}
+async function pick(all){if(!navigator.bluetooth){flash('Bluetooth not supported','Use Chrome or Edge on Android, Windows, Mac or ChromeOS. iPhone and Safari cannot do Web Bluetooth.','bad');return}
+ if(!window.isSecureContext){flash('Needs HTTPS','Web Bluetooth only works on an https:// page or http://localhost.','bad');return}
+ stopDemo();const extra=$('#cu').value.trim().toLowerCase(),svc=[0xFFE0,NUS,...(extra?[/^[0-9a-f]{4}$/.test(extra)?parseInt(extra,16):extra]:[])];
+ try{const nd=await navigator.bluetooth.requestDevice(all?{acceptAllDevices:true,optionalServices:svc}:{filters:[{namePrefix:'Soil'},{namePrefix:'Buddy'},{services:[0xFFE0]},{services:[NUS]}],optionalServices:svc});if(!dev||nd.id!==dev.id)resetState();dev=nd}
+ catch(e){setLink('off',e.name==='NotFoundError'?'No device':'Offline');if(e.name==='NotFoundError')log('No board chosen. If it was not listed: press EN on the ESP32, close the Dabble app and other phones, keep Bluetooth and Location on, then try List all devices in Setup.');if(e.name!=='NotFoundError'){log(e.message);flash('Could not start Bluetooth',e.message,'bad')}return}
+ link()}
+async function link(){if(!dev)return;userDisc=false;clearInterval(poll);setLink('busy','Connecting');
+ try{dev.ongattserverdisconnected=onDrop;let g;for(let i=1;i<=3;i++){try{g=await dev.gatt.connect();break}catch(e){if(i===3)throw e;setLink('busy','Retry '+i+'/3');log('Connect failed ('+e.message+'). The board allows one phone at a time: close the Dabble app. Retrying.');await new Promise(r=>setTimeout(r,900))}}rx=tx=null;
+  let sv;try{sv=await g.getPrimaryServices()}catch(e){throw Error('The board has none of the known service UUIDs (FFE0, Nordic UART). Read its UUID in nRF Connect and paste it in Setup.')}
+  for(const s of sv){if(/^0000180[01]/.test(s.uuid))continue;
+   for(const c of await s.getCharacteristics()){const p=c.properties;if(!tx&&(p.notify||p.indicate))tx=c;if(!rx&&(p.write||p.writeWithoutResponse))rx=c}if(tx&&rx)break}
+  if(!tx||!rx)throw Error('No usable Bluetooth characteristics. Add the board service UUID in Setup.');
+  tx.removeEventListener('characteristicvaluechanged',onVal);tx.addEventListener('characteristicvaluechanged',onVal);
+  await tx.startNotifications();S.rx=Date.now();A.stale=false;setLink('on','Connected');log('Connected via '+rx.service.uuid);
+  notify({key:'conn-ok',level:'ok',title:'Connected',text:dev.name||'Soil Buddy RE',cool:0});
+  heard=false;lastRxAt=0;waiting=false;useStatus=false;pollNow();poll=setInterval(pollNow,5000);
+  setTimeout(()=>{if(rx&&!lastRxAt){useStatus=true;waiting=false;log('No reply to the short poll. Trying plain status. If still silent: Terminal module must be 02 and the board needs the v3.3 sketch.');pollNow()}},4000);lock();render()}
+ catch(e){rx=tx=null;setLink('off','Offline');log(e.message);flash('Connection failed',e.message,'bad');render()}}
+$('#bt').onclick=$('#bt2').onclick=()=>pick(false);$('#all').onclick=()=>pick(true);$('#rec').onclick=link;
+$('#disc').onclick=()=>{userDisc=true;stopDemo();try{dev&&dev.gatt.connected&&dev.gatt.disconnect()}catch(e){}clearInterval(poll);rx=tx=null;unlock();setLink('off','Offline');render()};
+/* ---------- demo device (prints what the sketch prints, through the same parser) ---------- */
+const D={soil:62,cm:3.2,pump:'OFF',mode:'OFF / STANDBY'};
+function demoTick(){D.soil=clamp(D.soil+(D.pump==='ON'?9:-1.2)+(Math.random()-.5),0,100);D.cm=Math.max(0,D.cm-(D.pump==='ON'?.16:0));
+ text(`🌱 Soil: ${D.soil.toFixed(1)}% relative index (ADC ${Math.round((100-D.soil)*40.95)})\n🪣 Water: ~${D.cm.toFixed(1)} cm / 4.0 cm (ADC ${Math.round(D.cm/4*4095)})\n🎛️ Pump mode: ${D.mode}\n🚿 Pump state: ${D.pump}\n🛡️ Water guard: ${D.cm>.5?'PASS':'LOW'}\n`)}
+function demoCmd(c){if(c==='pump test'){D.pump='ON';D.mode='TIMED TEST';text('🧪🚿 SUPERVISED 30-SECOND PUMP TEST STARTED!\n');clearTimeout(tm);tm=setTimeout(()=>{D.pump='OFF';D.mode='OFF / STANDBY';text('🛑🚿 PUMP OFF — test ended.\n')},8000)}
+ else if(c==='pump off'){D.pump='OFF';D.mode='OFF / STANDBY';text('🛑🚿 PUMP OFF — user stop.\n')}else if(c==='pump auto'){D.mode='AUTO';text('🤖🌱 AUTO mode enabled!\n')}
+ else if(c==='status')demoTick();else if(c==='threshold')text('Demo rules: 1 s pulse, 90 s soak.\nTwo pulses, then a 5 min break.\n');else text('Demo device: try status, pump test, pump auto, pump off, threshold.\n')}
+function stopDemo(){if(!S.demo)return;clearInterval(poll);clearTimeout(tm);S.demo=false;setLink('off','Offline');resetState();render()}
+function startDemo(){if(S.demo){stopDemo();return}clearInterval(poll);userDisc=true;try{dev&&dev.gatt.connected&&dev.gatt.disconnect()}catch(e){}rx=tx=null;resetState();D.soil=62;D.cm=3.2;D.pump='OFF';D.mode='OFF / STANDBY';S.demo=true;setLink('demo','Demo');log('Demo started.');demoTick();poll=setInterval(demoTick,2000);render()}
+$('#demo').onclick=$('#demo2').onclick=startDemo;
+const dsync=()=>{$('#demo2').textContent=S.demo?'Stop demo':'Start demo'};setInterval(dsync,500);
+/* ---------- camera ---------- */
+const ix=(b,a)=>{for(let i=0;i<b.length-1;i++)if(b[i]===a[0]&&b[i+1]===a[1])return i;return-1};
+let camAbort=null;
+function camStop(){if(camAbort)camAbort.abort();camAbort=null;$('#live').hidden=true;$('#camgo span').textContent='Watch'}
+$('#ip').value=ls.get('sb-ip')||'';
+$('#camgo').onclick=async()=>{if(camAbort){camStop();$('#cam').hidden=true;$('#vfe').hidden=false;return}
+ const ip=$('#ip').value.trim().replace(/^https?:\/\//,'').replace(/\/.*$/,'');if(!ip)return;ls.set('sb-ip',ip);
+ const url=`http://${ip}:81/stream`;$('#camlink').href=url;const ac=camAbort=new AbortController();$('#camgo span').textContent='Stop';
+ try{const r=await fetch(url,{signal:ac.signal}),rd=r.body.getReader();let b=new Uint8Array(0),old;
+  for(;;){const{value,done}=await rd.read();if(done)break;const n=new Uint8Array(b.length+value.length);n.set(b);n.set(value,b.length);b=n;
+   let s=ix(b,[255,216]),e=ix(b,[255,217]);while(s>=0&&e>s){const u=URL.createObjectURL(new Blob([b.slice(s,e+2)],{type:'image/jpeg'}));$('#cam').src=u;$('#cam').hidden=false;$('#vfe').hidden=true;$('#live').hidden=false;if(old)URL.revokeObjectURL(old);old=u;b=b.slice(e+2);s=ix(b,[255,216]);e=ix(b,[255,217])}}}
+ catch(e){if(e.name!=='AbortError')flash('Camera blocked or unreachable',e.message+'. Try the stream link, or open this app from http://localhost.','bad')}
+ finally{if(camAbort===ac){camStop();if($('#cam').hidden)$('#vfe').hidden=false}}};
+/* ---------- sound ---------- */
+let AC,mute=ls.get('mute')==='1';
+function tone(f,d=.12,t='sine',v=.14,at=0,f2){if(mute)return;try{AC=AC||new(window.AudioContext||webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime+at;o.type=t;o.frequency.setValueAtTime(f,n);if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+d)}catch(e){}}
+const sfx={tap:()=>tone(660,.05,'triangle',.05),info:()=>tone(900,.1,'sine',.12,0,1300),ok:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.14,'triangle',.12,i*.08)),warn:()=>{tone(440,.14,'triangle',.13);tone(330,.22,'triangle',.13,.14)},bad:()=>{tone(220,.18,'sawtooth',.09);tone(170,.25,'sawtooth',.09,.2)},pump:()=>{tone(300,.25,'sine',.16,0,700);tone(500,.2,'sine',.12,.1,900)},off:()=>tone(500,.25,'sine',.12,0,200)};
+document.addEventListener('click',e=>{if(e.target.closest('button'))sfx.tap()});
+let pp='--';function fxSound(){if(pp!=='--'&&S.pump!=='--'&&pp!==S.pump)S.pump==='ON'?sfx.pump():sfx.off();pp=S.pump}
+/* ---------- notifications ---------- */
+const LV={info:{ic:'info',vib:[60],snd:'info'},ok:{ic:'check',vib:[60,40,60],snd:'ok'},warn:{ic:'alert',vib:[120,60,120],snd:'warn'},bad:{ic:'alert',vib:[200,80,200,80,200],snd:'bad'}};
+let inbox=[];try{inbox=JSON.parse(ls.get('sb-inbox')||'[]')}catch(e){}if(!Array.isArray(inbox))inbox=[];
+const saveInbox=()=>ls.set('sb-inbox',JSON.stringify(inbox.filter(i=>!i.demo)));
+const cool={};
+function ago(t){const m=Math.round((Date.now()-t)/60000);if(m<1)return'just now';if(m<60)return m+' min ago';if(m<1440)return Math.round(m/60)+' h ago';return new Date(t).toLocaleDateString([],{day:'numeric',month:'short'})+' '+tfmt(t)}
+function toast(it){const wrap=$('#toasts'),el=document.createElement('div');el.className='toast '+it.level;el.setAttribute('role',it.level==='bad'?'alert':'status');
+ el.innerHTML=`<span class="tic">${ico(LV[it.level].ic)}</span><div><b></b><p></p></div><button aria-label="Dismiss">${ico('close','sm')}</button>`;
+ el.querySelector('b').textContent=it.title;el.querySelector('p').textContent=it.text;if(!it.text)el.querySelector('p').remove();
+ const kill=()=>{el.classList.add('out');setTimeout(()=>el.remove(),300)};
+ el.querySelector('button').onclick=e=>{e.stopPropagation();kill()};el.onclick=()=>{kill();if(it.saved)openSheet()};
+ wrap.prepend(el);while(wrap.children.length>3)wrap.lastChild.remove();setTimeout(kill,it.level==='bad'?8000:5000)}
+function flash(title,text,level){toast({level:level||'info',title,text})}
+const swReady=()=>('serviceWorker' in navigator)?Promise.race([navigator.serviceWorker.ready,new Promise(r=>setTimeout(()=>r(null),1500))]):Promise.resolve(null);
+async function sysNote(it,actions){const o={body:it.text,icon:'icon-192.png',badge:'badge-96.png',tag:'sb-'+it.title,renotify:true,data:{level:it.level}};if(cfg.vib)o.vibrate=LV[it.level].vib;
+ const reg=await swReady();if(reg){try{await reg.showNotification(it.title,Object.assign({actions:actions||[]},o));return}catch(e){}}
+ try{new Notification(it.title,o)}catch(e){}}
+function notify(o,force){const now=Date.now();
+ if(!force&&o.key&&cool[o.key]&&now-cool[o.key]<(o.cool==null?60000:o.cool))return;if(o.key)cool[o.key]=now;
+ const it={id:now+Math.random(),t:now,level:o.level||'info',title:(S.demo?'DEMO · ':'')+o.title,text:o.text||'',read:false,demo:S.demo,saved:true};
+ inbox.unshift(it);inbox=inbox.slice(0,50);saveInbox();renderBell();if(!$('#sheet').hidden)renderInbox();
+ const quiet=cfg.snooze>now&&!force;if(quiet)return;
+ toast(it);sfx[LV[it.level].snd]();
+ const hidden=document.visibilityState==='hidden';
+ if(cfg.vib&&!hidden&&navigator.vibrate)try{navigator.vibrate(LV[it.level].vib)}catch(e){}
+ if((hidden||force)&&cfg.sys&&'Notification' in window&&Notification.permission==='granted')sysNote(it,o.actions)}
+function renderBell(){const n=inbox.filter(i=>!i.read).length;$('#badge').hidden=!n;$('#badge').textContent=n>9?'9+':n;$('#bell').setAttribute('aria-label',n?`Alerts, ${n} unread`:'Alerts')}
+function renderInbox(){const el=$('#inbox');el.innerHTML='';if(!inbox.length){el.innerHTML='<div class="none">No alerts yet.<br><small>Dry soil, low tank and pump events show up here.</small></div>';return}
+ inbox.forEach(it=>{const d=document.createElement('div');d.className='ni '+it.level+(it.read?'':' un');d.innerHTML=`<span class="tic">${ico(LV[it.level].ic)}</span><div><b></b><p></p><small></small></div>`;
+  d.querySelector('b').textContent=it.title;const p=d.querySelector('p');it.text?p.textContent=it.text:p.remove();d.querySelector('small').textContent=ago(it.t);el.appendChild(d)})}
+function openSheet(){renderInbox();$('#sheet').hidden=false;inbox.forEach(i=>i.read=true);saveInbox();renderBell();$('#closesheet').focus()}
+function closeSheet(){$('#sheet').hidden=true;$('#bell').focus()}
+$('#bell').onclick=openSheet;$('#scrim').onclick=$('#closesheet').onclick=closeSheet;addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sheet').hidden)closeSheet()});
+$('#clearall').onclick=()=>{inbox=[];saveInbox();renderBell();renderInbox()};
+function snooze(min){cfg.snooze=Date.now()+min*60000;saveCfg();syncCfg();flash('Alerts snoozed','Silent until '+tfmt(cfg.snooze)+'. They still collect in the bell.','info')}
+/* alert rules: see HANDOFF section 6 */
+const SNZ=[{action:'snooze',title:'Snooze 1 h'}];
+function evaluate(){const now=Date.now(),s=S.soil;
+ if(s!=null){
+  if(!A.dry&&s<cfg.dry){A.dry=true;A.lastDry=now;notify({key:'dry',level:'warn',title:'Soil is dry',text:`Moisture index ${Math.round(s)}% is below your ${cfg.dry}% alert level.`,actions:SNZ})}
+  else if(A.dry&&s>=cfg.dry+5){A.dry=false;notify({key:'dry-ok',level:'ok',title:'Soil recovered',text:`Moisture index is back to ${Math.round(s)}%.`})}
+  else if(A.dry&&cfg.rep>0&&now-A.lastDry>=cfg.rep*60000){A.lastDry=now;notify({key:'dry-rep',level:'warn',title:'Still dry',text:`Moisture index ${Math.round(s)}%.`,actions:SNZ,cool:0})}}
+ if(S.cm!=null){
+  if(!A.tank&&S.cm<cfg.tankCm){A.tank=true;const e=S.cm<0.5;notify({key:'tank',level:e?'bad':'warn',title:e?'Tank nearly empty':'Tank is low',text:`Water level about ${S.cm.toFixed(1)} cm (estimate).`})}
+  else if(A.tank&&S.cm>=cfg.tankCm+0.4){A.tank=false;notify({key:'tank-ok',level:'ok',title:'Tank refilled',text:`Water level about ${S.cm.toFixed(1)} cm (estimate).`})}}
+ if(S.guard!=='--'&&S.guard!==A.guard){const first=A.guard===null;A.guard=S.guard;
+  if(S.guard!=='PASS')notify({key:'guard',level:'bad',title:'Water guard blocked pumping',text:`The board reports guard: ${S.guard}.`,cool:0});
+  else if(!first)notify({key:'guard',level:'ok',title:'Water guard clear',text:'Pumping is allowed again.',cool:0})}
+ if(S.pump!=='--'&&S.pump!==A.pump){const prev=A.pump;A.pump=S.pump;
+  if(prev!==null){if(S.pump==='ON')notify({key:'pump',level:'info',title:'Pump started',text:S.mode!=='--'?'Mode: '+S.mode+'.':'',actions:[{action:'stop',title:'Stop pump'}],cool:0});else if(prev==='ON')notify({key:'pump',level:'ok',title:'Pump stopped',text:'',cool:0})}}}
+setInterval(()=>{if(!connected()){A.stale=false;return}const age=(Date.now()-S.rx)/1000;
+ if(!A.stale&&age>cfg.stale){A.stale=true;notify({key:'stale',level:'warn',title:'No data from the board',text:`Nothing received for ${Math.round(age)} s.`,cool:0})}
+ else if(A.stale&&age<cfg.stale){A.stale=false;notify({key:'stale-ok',level:'ok',title:'Data resumed',text:'',cool:0})}},5000);
+/* ---------- settings ---------- */
+function syncCfg(){$('#c-sys').checked=cfg.sys&&'Notification' in window&&Notification.permission==='granted';$('#c-vib').checked=cfg.vib;$('#c-snd').checked=!mute;$('#c-awake').checked=cfg.awake;
+ $('#c-dry').value=cfg.dry;$('#c-tank').value=cfg.tankCm;$('#c-rep').value=cfg.rep;$('#c-stale').value=cfg.stale;
+ const p='Notification' in window?Notification.permission:'unsupported';$('#permt').textContent=p==='granted'?'On. Alerts show when the app is in the background.':p==='denied'?'Blocked. Allow notifications for this site in the browser settings.':p==='unsupported'?'This browser cannot show phone notifications.':'Show alerts when the app is in the background';
+ const sn=cfg.snooze>Date.now();$('#snz').textContent=sn?'Resume alerts':'Snooze 1 h';render()}
+async function enableSys(){if(!('Notification' in window)){flash('Not supported','This browser cannot show phone notifications.','warn');syncCfg();return false}
+ let p=Notification.permission;if(p==='default'){try{p=await Notification.requestPermission()}catch(e){}}
+ cfg.sys=p==='granted';saveCfg();syncCfg();
+ if(p==='granted'){notify({level:'ok',title:'Phone alerts are on',text:'You will be notified while the app stays open.'},true);return true}
+ flash(p==='denied'?'Notifications are blocked':'Not enabled','Allow notifications for this site in your browser settings.','warn');return false}
+$('#c-sys').onchange=async e=>{if(e.target.checked)await enableSys();else{cfg.sys=false;saveCfg();syncCfg()}};
+$('#c-vib').onchange=e=>{cfg.vib=e.target.checked;saveCfg()};
+$('#c-snd').onchange=e=>{mute=!e.target.checked;ls.set('mute',mute?'1':'0');if(!mute)sfx.ok()};
+$('#c-awake').onchange=e=>{cfg.awake=e.target.checked;saveCfg();cfg.awake?lock():unlock()};
+const num=(id,k,a,b,f)=>$(id).onchange=e=>{const v=f?parseFloat(e.target.value):parseInt(e.target.value,10);cfg[k]=Number.isFinite(v)?clamp(f?Math.round(v*10)/10:v,a,b):CFG0[k];saveCfg();syncCfg();A.dry=A.tank=false;evaluate()};
+num('#c-dry','dry',0,100);num('#c-tank','tankCm',0,4,1);num('#c-rep','rep',0,720);num('#c-stale','stale',15,600);
+$('#testn').onclick=()=>notify({level:'warn',title:'Test alert',text:'This is what an alert looks like.',actions:SNZ},true);
+$('#snz').onclick=()=>{if(cfg.snooze>Date.now()){cfg.snooze=0;saveCfg();syncCfg();flash('Alerts resumed','','ok')}else snooze(60)};
+/* ---------- keep screen on ---------- */
+let wl=null;async function lock(){if(!cfg.awake||!('wakeLock' in navigator)||!connected()||wl)return;try{wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}catch(e){}}
+function unlock(){try{wl&&wl.release()}catch(e){}wl=null}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&connected())lock()});
+/* ---------- install + service worker ---------- */
+let ev;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;$('#inst').hidden=false});
+$('#inst').onclick=()=>{ev&&ev.prompt();ev=null;$('#inst').hidden=true};addEventListener('appinstalled',()=>{$('#inst').hidden=true});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){navigator.serviceWorker.register('sw.js').catch(()=>{});
+ navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='snooze')snooze(60);if(d.type==='cmd'&&d.cmd==='pump off')send('pump off')})}
+/* ---------- intro ---------- */
+const intro=$('#intro'),slides=$('#slides');
+function endIntro(){ls.set('sb-intro','1');intro.classList.add('out');setTimeout(()=>{intro.style.display='none'},650)}
+function slideAt(){return Math.round(slides.scrollLeft/slides.clientWidth)}
+slides.addEventListener('scroll',()=>{const i=slideAt();$$('#idots i').forEach((d,n)=>d.classList.toggle('on',n===i));$('#next').hidden=i>=2;$('#skip').hidden=i>=2},{passive:true});
+$('#next').onclick=()=>slides.scrollBy({left:slides.clientWidth,behavior:'smooth'});
+$('#skip').onclick=$('#later').onclick=endIntro;$('#enable').onclick=async()=>{await enableSys();endIntro()};
+$('#replay').onclick=()=>{intro.style.display='';document.documentElement.classList.remove('nointro');intro.classList.remove('out');slides.scrollLeft=0;go('home')};
+/* ---------- init ---------- */
+syncCfg();renderBell();render();setLink('off','Offline');
+</script></body></html>
